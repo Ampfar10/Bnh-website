@@ -87,5 +87,33 @@
       Already have an account? <a href="login.html">Login here</a>
     </div>
   </div>
+
+  <script>
+    const signupForm = document.getElementById('signupForm');
+
+    signupForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const mobileNumber = document.getElementById('mobileNumber').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: mobileNumber,
+          password: password
+        })
+      });
+
+      if (response.ok) {
+        alert('Registration successful');
+      } else {
+        alert('Registration failed');
+      }
+    });
+  </script>
 </body>
 </html>
