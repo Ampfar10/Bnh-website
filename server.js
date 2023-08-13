@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // Added JSON body parsing
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/yourdbname', {
@@ -35,6 +36,28 @@ app.post('/register', async (req, res) => {
 
   await newUser.save();
   res.status(201).send('User registered successfully');
+});
+
+// Handle POST request for user login
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  // Find the user by username
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    res.status(401).send('User not found');
+    return;
+  }
+
+  // Compare password
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (passwordMatch) {
+    res.status(200).send('Login successful');
+  } else {
+    res.status(401).send('Login failed');
+  }
 });
 
 // Start the server
